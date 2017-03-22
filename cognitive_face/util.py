@@ -4,6 +4,8 @@
 File: util.py
 Description: Shared utilities for the Python SDK of the Cognitive Face API.
 """
+import numpy as np
+import cv2
 import os.path
 import time
 
@@ -105,11 +107,24 @@ def parse_image(image):
         a three-item tuple consist of HTTP headers, binary data and json data
         for POST.
     """
-    if hasattr(image, 'read'):  # When image is a file-like object.
+    try:
+        isfile=os.path.isfile(image)
+    except:
+        isfile=False
+
+    if isinstance(image, str) and not(isfile):
+        headers = {'Content-Type': 'application/octet-stream'}
+        data = image
+        return headers, data, None
+    elif isinstance(image, np.ndarray):
+        headers = {'Content-Type': 'application/octet-stream'}
+        data = cv2.imencode('.jpg', image)[1].tostring()
+        return headers, data, None
+    elif hasattr(image, 'read'):  # When image is a file-like object.
         headers = {'Content-Type': 'application/octet-stream'}
         data = image.read()
         return headers, data, None
-    elif os.path.isfile(image):  # When image is a file path.
+    elif isfile:  # When image is a file path.
         headers = {'Content-Type': 'application/octet-stream'}
         data = open(image, 'rb').read()
         return headers, data, None
