@@ -13,7 +13,7 @@ import requests
 
 import cognitive_face as CF
 
-_BASE_URL = 'https://westus.api.cognitive.microsoft.com/face/v1.0/'
+_BASE_URL = 'https://eastus2.api.cognitive.microsoft.com/face/v1.0/'
 TIME_SLEEP = 1
 
 
